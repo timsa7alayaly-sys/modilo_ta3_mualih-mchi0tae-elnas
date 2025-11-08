@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management - Modilo Admin</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .admin-header h1 {
+            font-family: 'DM Serif Text', serif;
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .admin-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .admin-tabs button {
+            padding: 12px 30px;
+            border: none;
+            background-color: #e0f7fa;
+            color: #333;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-family: 'Noto Serif', serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .admin-tabs button.active {
+            background-color: #007BFF;
+            color: #fff;
+        }
+        .admin-tabs button:hover {
+            background-color: #0056b3;
+            color: #fff;
+        }
+        .admin-section {
+            display: none;
+        }
+        .admin-section.active {
+            display: block;
+        }
+        .add-product-form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Noto Serif', serif;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .admin-product-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .admin-product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .admin-product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .admin-product-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .admin-product-card .product-info {
+            margin-bottom: 15px;
+        }
+        .admin-product-card .product-info p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .admin-product-card .price {
+            font-size: 1.3rem;
+            color: #007BFF;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .admin-product-card .category-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #e0f7fa;
+            color: #007BFF;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        .delete-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .success-message {
+            background-color: #28a745;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .empty-state h3 {
+            font-family: 'DM Serif Text', serif;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="../images/logo.png" alt="Modilo Logo" style="width: 100px;height: 70px;"/>
+        <!--<h1>Modilo</h1>-->
+        <nav>
+            <a href="../index.html">Home</a>
+            <a href="men.html">Men</a>
+            <a href="women.html">Women</a>
+        </nav>
+        <a href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                <path d="M442.9 144C415.6 144 389.9 157.1 373.9 179.2L339.5 226.8C335 233 327.8 236.7 320.1 236.7C312.4 236.7 305.2 233 300.7 226.8L266.3 179.2C250.3 157.1 224.6 144 197.3 144C150.3 144 112.2 182.1 112.2 229.1C112.2 279 144.2 327.5 180.3 371.4C221.4 421.4 271.7 465.4 306.2 491.7C309.4 494.1 314.1 495.9 320.2 495.9C326.3 495.9 331 494.1 334.2 491.7C368.7 465.4 419 421.3 460.1 371.4C496.3 327.5 528.2 279 528.2 229.1C528.2 182.1 490.1 144 443.1 144zM335 151.1C360 116.5 400.2 96 442.9 96C516.4 96 576 155.6 576 229.1C576 297.7 533.1 358 496.9 401.9C452.8 455.5 399.6 502 363.1 529.8C350.8 539.2 335.6 543.9 320 543.9C304.4 543.9 289.2 539.2 276.9 529.8C240.4 502 187.2 455.5 143.1 402C106.9 358.1 64 297.7 64 229.1C64 155.6 123.6 96 197.1 96C239.8 96 280 116.5 305 151.1L320 171.8L335 151.1z"/>
+            </svg>
+        </a>
+        <a href="cart.html" class="icon-cart">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                <path d="M24 48C10.7 48 0 58.7 0 72C0 85.3 10.7 96 24 96L69.3 96C73.2 96 76.5 98.8 77.2 102.6L129.3 388.9C135.5 423.1 165.3 448 200.1 448L456 448C469.3 448 480 437.3 480 424C480 410.7 469.3 400 456 400L200.1 400C188.5 400 178.6 391.7 176.5 380.3L171.4 352L475 352C505.8 352 532.2 330.1 537.9 299.8L568.9 133.9C572.6 114.2 557.5 96 537.4 96L124.7 96L124.3 94C119.5 67.4 96.3 48 69.2 48L24 48zM208 576C234.5 576 256 554.5 256 528C256 501.5 234.5 480 208 480C181.5 480 160 501.5 160 528C160 554.5 181.5 576 208 576zM432 576C458.5 576 480 554.5 480 528C480 501.5 458.5 480 432 480C405.5 480 384 501.5 384 528C384 554.5 405.5 576 432 576z"/>
+            </svg>
+            <div class="quantity">0</div>
+        </a>
+        <a href="../login.php">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                <path d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/>
+            </svg>
+        </a>
+         <div class="language-selector">
+            <button class="language-button" onclick="toggleLanguageDropdown()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                    <path d="M352 256c0 22.2-1.2 43.6-3.3 64H163.3c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64H348.7c2.2 20.4 3.3 41.8 3.3 64zm28.8-64H503.9c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64H380.8c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64zm112.6-32H376.7c-10-63.9-29.8-117.4-55.3-151.6c78.3 20.7 142 77.5 171.9 151.6zm-149.1 0H167.7c6.1-36.4 15.5-68.6 27-94.7c10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5c11.6 26 20.9 58.2 27 94.7zm-209 0H18.6C48.6 85.9 112.2 29.1 190.6 8.4C165.1 42.6 145.3 96.1 135.3 160zM8.1 192H131.2c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64H8.1C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64zM194.7 446.6c-11.6-26-20.9-58.2-27-94.6H344.3c-6.1 36.4-15.5 68.6-27 94.6c-10.5 23.6-22.2 40.7-33.5 51.5C272.6 508.8 263.3 512 256 512s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6C112.2 482.9 48.6 426.1 18.6 352H135.3zm81.3 183.6c25.5-34.2 45.2-87.7 55.3-151.6H376.7c-10 63.9-29.8 117.4-55.3 151.6c-78.3-20.7-142-77.5-171.9-151.6z"/>
+                </svg>
+                <span id="current-language">English</span>
+            </button>
+            <div id="language-dropdown" class="language-dropdown">
+                <button class="language-option" onclick="setLanguage('en'); toggleLanguageDropdown();">English</button>
+                <button class="language-option" onclick="setLanguage('fr'); toggleLanguageDropdown();">Français</button>
+                <button class="language-option" onclick="setLanguage('ar'); toggleLanguageDropdown();">العربية</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="admin-container">
+            <div class="admin-header">
+                <h1>Product Management</h1>
+                <p>Add new products or manage existing ones</p>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="active" onclick="switchTab('add')">Add Product</button>
+                <button onclick="switchTab('manage')">Manage Products</button>
+            </div>
+
+            <div id="success-message" class="success-message"></div>
+
+            <!-- Add Product Section -->
+            <div id="add-section" class="admin-section active">
+                <div class="add-product-form">
+                    <h2 style="margin-bottom: 20px; font-family: 'DM Serif Text', serif;">Add New Product</h2>
+                    <form id="add-product-form">
+                        <div class="form-group">
+                            <label for="product-name">Product Name *</label>
+                            <input type="text" id="product-name" required placeholder="Enter product name">
+                        </div>
+                        <div class="form-group">
+                            <label for="product-price">Price (DZ) *</label>
+                            <input type="number" id="product-price" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="product-category">Category *</label>
+                            <select id="product-category" required>
+                                <option value="">Select a category</option>
+                                <option value="men">Men</option>
+                                <option value="women">Women</option>
+                                <option value="kids">Kids</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-image-file">Image File (or paste URL below)</label>
+                            <input type="file" id="product-image-file" accept="image/*">
+                        </div>
+                        <div class="form-group">
+                            <label for="product-image">Or Image URL (optional)</label>
+                            <input type="text" id="product-image" placeholder="../images/product.jpg - optional if you uploaded a file">
+                        </div>
+                        <div class="form-group">
+                            <label for="product-description">Description</label>
+                            <textarea id="product-description" placeholder="Optional product description"></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Add Product</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Manage Products Section -->
+            <div id="manage-section" class="admin-section">
+                <div id="products-list" class="products-grid">
+                    <!-- Products will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Modilo. All rights reserved.</p>
+        <div id="footer-socials">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+        <div id="footer-links">
+            <a href="#privacy">Privacy Policy</a>
+            <a href="#terms">Terms of Service</a>
+            <a href="#contact">Contact Us</a>
+        </div>
+    </footer>
+
+    <script src="../js/cart.js"></script>
+    <script>
+        // Product management with localStorage for persistence
+        let products = [];
+
+        // Load products from localStorage (persists after browser close)
+        function loadProducts() {
+            const savedProducts = JSON.parse(localStorage.getItem('modiloProducts') || '[]');
+            products = savedProducts;
+            renderProducts();
+        }
+
+        // Save products to localStorage (persists after browser close)
+        function saveProducts() {
+            localStorage.setItem('modiloProducts', JSON.stringify(products));
+        }
+
+        // Switch tabs
+        function switchTab(tab) {
+            document.querySelectorAll('.admin-tabs button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.admin-section').forEach(section => section.classList.remove('active'));
+            
+            if (tab === 'add') {
+                document.querySelectorAll('.admin-tabs button')[0].classList.add('active');
+                document.getElementById('add-section').classList.add('active');
+            } else {
+                document.querySelectorAll('.admin-tabs button')[1].classList.add('active');
+                document.getElementById('manage-section').classList.add('active');
+                renderProducts();
+            }
+        }
+
+        // Add product (supports uploading an image file or using an URL)
+        document.getElementById('add-product-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('product-name').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const category = document.getElementById('product-category').value;
+            const description = document.getElementById('product-description').value;
+
+            const fileInput = document.getElementById('product-image-file');
+            const urlInput = document.getElementById('product-image');
+
+            const pushProduct = (imageSrc) => {
+                const product = {
+                    id: Date.now().toString(),
+                    name: name,
+                    price: price,
+                    category: category,
+                    image: imageSrc,
+                    description: description
+                };
+
+                products.push(product);
+                saveProducts();
+
+                // Show success message
+                showSuccess('Product added successfully! It will now appear on the ' + product.category + ' page.');
+
+                // Reset form
+                document.getElementById('add-product-form').reset();
+
+                // Switch to manage tab after 1.5 seconds
+                setTimeout(() => switchTab('manage'), 1500);
+            };
+
+            // If a file was selected, read it as a data URL and store that
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    // store the image as a data URL (keeps it working without an external server)
+                    pushProduct(evt.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // fallback to URL input (if provided) or a placeholder
+                const imageSrc = urlInput && urlInput.value ? urlInput.value : '../images/placeholder.jpg';
+                pushProduct(imageSrc);
+            }
+        });
+
+        // Render products
+        function renderProducts() {
+            const productsList = document.getElementById('products-list');
+            
+            if (products.length === 0) {
+                productsList.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <h3>No products yet</h3>
+                        <p>Start by adding your first product!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            productsList.innerHTML = products.map(product => `
+                <div class="admin-product-card">
+                    <img src="${product.image}" alt="${product.name}" onerror="this.src='../images/placeholder.jpg'">
+                    <span class="category-badge">${product.category.toUpperCase()}</span>
+                    <h3>${product.name}</h3>
+                    <div class="price">DZ${product.price.toFixed(2)}</div>
+                    ${product.description ? `<div class="product-info"><p>${product.description}</p></div>` : ''}
+                    <button class="delete-btn" onclick="deleteProduct('${product.id}')">
+                        <i class="fas fa-trash"></i> Delete Product
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Delete product
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this product? It will be removed from all pages.')) {
+                products = products.filter(p => p.id !== id);
+                saveProducts();
+                renderProducts();
+                showSuccess('Product deleted successfully!');
+            }
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successMsg = document.getElementById('success-message');
+            successMsg.textContent = message;
+            successMsg.style.display = 'block';
+            
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadProducts);
+    </script>
+</body>
+</html>
